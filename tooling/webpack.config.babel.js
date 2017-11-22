@@ -10,6 +10,8 @@ module.exports = {
     output: {
         filename: 'yeelight-compat-hue.js',
         path: path.resolve(__dirname, '../dist'),
+        library: 'yeelight-compat-hue',
+        libraryTarget: 'umd',
     },
     module: {
         loaders: [

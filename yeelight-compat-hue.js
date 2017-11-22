@@ -1,13 +1,17 @@
-console.log('hello from yeelight');
-
-export default RED => {
+module.exports = RED => {
     function YeeLightNode(config) {
-        RED.nodes.createNode(this, config);
-        var node = this;
-        node.on('input', function(msg) {
-            msg.payload = msg.payload.toLowerCase();
+        const node = this;
+
+        const onInput = msg => {
+            console.log(msg);
             node.send(msg);
-        });
+        };
+
+        (function init() {
+            RED.nodes.createNode(node, config);
+            node.on('input', onInput);
+        })();
     }
+
     RED.nodes.registerType('yeelight-compat-hue', YeeLightNode);
 };

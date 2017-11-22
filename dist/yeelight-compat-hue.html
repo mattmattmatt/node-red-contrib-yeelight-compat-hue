@@ -1,0 +1,35 @@
+<script type="text/javascript">
+    RED.nodes.registerType('yeelight-compat-hue', {
+        category: 'output',
+        color: '#ccffaa',
+        defaults: {
+            name: {
+                value: ''
+            },
+            hostname: {
+                value: '',
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 0,
+        label: function() {
+            return this.name || 'yeelight-compat-hue';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="yeelight-compat-hue">
+    <div class="form-row">
+        <label for="node-input-hostname"><i class="icon-tag"></i> Hostname/IP</label>
+        <input type="text" id="node-input-hostname" placeholder="192.168.1.140" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="yeelight-compat-hue">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>

@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["yeelight-compat-hue"] = factory();
+	else
+		root["yeelight-compat-hue"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -70,22 +80,24 @@
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-console.log('hello from yeelight');
-
-exports.default = function (RED) {
+module.exports = function (RED) {
     function YeeLightNode(config) {
-        RED.nodes.createNode(this, config);
         var node = this;
-        node.on('input', function (msg) {
-            msg.payload = msg.payload.toLowerCase();
+
+        var onInput = function onInput(msg) {
+            console.log(msg);
             node.send(msg);
-        });
+        };
+
+        (function init() {
+            RED.nodes.createNode(node, config);
+            node.on('input', onInput);
+        })();
     }
+
     RED.nodes.registerType('yeelight-compat-hue', YeeLightNode);
 };
 
 /***/ })
 /******/ ]);
+});

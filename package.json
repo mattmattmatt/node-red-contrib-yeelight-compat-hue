@@ -8,7 +8,7 @@
         "dist-clean": "rm -rf dist",
         "dev": "npm run build-watch | npm run watch-run-red",
         "build-watch": "webpack --config tooling/webpack.config.babel.js --watch",
-        "watch-run-red": "nodemon --watch dist --exec node-red",
+        "watch-run-red": "nodemon --watch dist/*.js --watch dist/*.html --exec 'node-red -v'",
         "build": "webpack --config tooling/webpack.config.babel.js"
     },
     "repository": {
