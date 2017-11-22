@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("yeelight2"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["yeelight2"], factory);
 	else if(typeof exports === 'object')
-		exports["yeelight-compat-hue"] = factory();
+		exports["yeelight-compat-hue"] = factory(require("yeelight2"));
 	else
-		root["yeelight-compat-hue"] = factory();
-})(this, function() {
+		root["yeelight-compat-hue"] = factory(root["yeelight2"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -80,23 +80,59 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
+var _yeelight = __webpack_require__(1);
+
+var _yeelight2 = _interopRequireDefault(_yeelight);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 module.exports = function (RED) {
     function YeeLightNode(config) {
         var node = this;
 
         var onInput = function onInput(msg) {
             console.log(msg);
-            node.send(msg);
+            var _msg$payload = msg.payload,
+                on = _msg$payload.on,
+                hex = _msg$payload.hex,
+                bri = _msg$payload.bri,
+                hue = _msg$payload.hue,
+                sat = _msg$payload.sat,
+                duration = _msg$payload.duration;
+
+
+            if (typeof on !== 'undefined') {
+                node.yeelight.set_power(on, null, duration);
+            }
+            if (typeof bri !== 'undefined') {
+                node.yeelight.set_bright(bri, null, duration);
+            }
+            if (typeof hue !== 'undefined' || typeof sat !== 'undefined') {
+                node.yeelight.set_hsv(hue, sat, null, duration);
+            }
+            if (typeof hex !== 'undefined') {
+                var _hex = parseInt('0x' + hex.replace('#', ''), 16);
+                console.log('_hex', _hex);
+                node.yeelight.set_rgb(_hex, null, duration);
+            }
+            console.log(on, bri, hue, sat);
         };
 
         (function init() {
             RED.nodes.createNode(node, config);
+            node.yeelight = new _yeelight2.default('yeelight://192.168.1.142:55443');
             node.on('input', onInput);
         })();
     }
 
     RED.nodes.registerType('yeelight-compat-hue', YeeLightNode);
 };
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ })
 /******/ ]);
