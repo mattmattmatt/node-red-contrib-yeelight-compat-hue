@@ -1,35 +1,137 @@
 <script type="text/javascript">
     RED.nodes.registerType('yeelight-compat-hue', {
-        category: 'output',
-        color: '#ccffaa',
+        category: 'lights',
+        color: '#E2D96E',
         defaults: {
             name: {
                 value: ''
             },
-            hostname: {
+            server: {
                 value: '',
-                required: true
-            }
+                required: true,
+                type: 'yeelight-compat-hue-config'
+            },
         },
         inputs: 1,
         outputs: 0,
+        icon: 'light.png',
         label: function() {
-            return this.name || 'yeelight-compat-hue';
+            return this.name || 'yeelight out';
+        },
+        paletteLabel: 'yeelight out',
+        align: 'right',
+    });
+</script>
+
+<script type="text/x-red"
+    data-template-name="yeelight-compat-hue">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Yeelight</label>
+        <input type="text" id="node-input-server" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text"
+            id="node-input-name"
+            placeholder="Name" />
+    </div>
+</script>
+
+<script type="text/x-red"
+    data-help-name="yeelight-compat-hue">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('yeelight-compat-hue-state', {
+        category: 'lights',
+        color: '#E2D96E',
+        defaults: {
+            name: {
+                value: ''
+            },
+            server: {
+                value: '',
+                required: true,
+                type: 'yeelight-compat-hue-config'
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'light.png',
+        label: function() {
+            return this.name || 'yeelight state';
+        },
+        paletteLabel: 'yeelight state',
+    });
+</script>
+
+<script type="text/x-red"
+    data-template-name="yeelight-compat-hue-state">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Yeelight</label>
+        <input type="text" id="node-input-server" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text"
+            id="node-input-name"
+            placeholder="Name" />
+    </div>
+</script>
+
+<script type="text/x-red"
+    data-help-name="yeelight-compat-hue-state">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
+
+
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('yeelight-compat-hue-config', {
+        category: 'config',
+        defaults: {
+            hostname: {
+                value: '',
+                required: true
+            },
+            port: {
+                value: 55443,
+                required: true,
+                validate: RED.validators.number()
+            },
+            name: {
+                value: '',
+                required: false,
+            },
+        },
+        label: function() {
+            const host = this.hostname + ":" + this.port;
+            return this.name ? this.name + ' (' + host + ')' : host;
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="yeelight-compat-hue">
+<script type="text/x-red"
+    data-template-name="yeelight-compat-hue-config">
     <div class="form-row">
-        <label for="node-input-hostname"><i class="icon-tag"></i> Hostname/IP</label>
-        <input type="text" id="node-input-hostname" placeholder="192.168.1.140" />
+        <label for="node-config-input-hostname"><i class="icon-bookmark"></i> Hostname/IP</label>
+        <input type="text" id="node-config-input-hostname" placeholder="192.168.1.140">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name" />
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port" placeholder="55443">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="yeelight-compat-hue">
-    <p>A simple node that converts the message payloads into all lower-case characters</p>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-bookmark"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
 </script>
