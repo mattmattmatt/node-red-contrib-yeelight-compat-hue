@@ -4,35 +4,30 @@
 import Yeelight from 'yeelight2';
 import convert from 'color-convert';
 
-import { sanitizeState } from './utils';
-
-function hexToRgbInt(hex) {
-    console.log('hexToRgbInt', hex);
-    return parseInt('0x' + hex.replace('#', ''), 16);
-}
+import { sanitizeState, hexToRgbInt, normalize } from './utils';
 
 export default function YeeLightNodeOut(RED) {
     return function(config) {
         const node = this;
-        let reconnectionTimeout;
 
         const onInput = msg => {
             console.log(msg.payload);
             const { on, hex, bri, hue, sat, duration } = msg.payload;
 
             if (on === false) {
-                node.yeelight.set_power(on, null, duration);
+                node.serverConfig.yeelight.set_power(on, null, duration);
                 return;
             }
 
-            node.yeelight.sync().then(state => {
-                const currentState = sanitizeState(state);
+            node.serverConfig.yeelight.sync().then(state => {
+                const currentState = sanitizeState(state).state;
+                console.log('currentState', currentState);
                 let rgbIntToTurnTo;
                 let briToTurnTo;
 
                 if (typeof hex !== 'undefined') {
                     rgbIntToTurnTo = hexToRgbInt(hex);
-                    briToTurnTo = bri || convert.hex.hsv(hex)[2];
+                    briToTurnTo = (bri && normalize(bri, 255, 100)) || convert.hex.hsv(hex)[2];
                 } else if (
                     typeof hue !== 'undefined' ||
                     typeof sat !== 'undefined' ||
@@ -40,14 +35,14 @@ export default function YeeLightNodeOut(RED) {
                 ) {
                     rgbIntToTurnTo = hexToRgbInt(
                         convert.hsv.hex(
-                            hue || currentState.hue,
-                            sat || currentState.sat,
-                            bri || currentState.bright
+                            normalize(hue || currentState.hue, 65535, 359),
+                            normalize(sat || currentState.sat, 255, 100),
+                            normalize(bri || currentState.bri, 255, 100)
                         )
                     );
-                    briToTurnTo = bri || currentState.bright;
+                    briToTurnTo = normalize(bri || currentState.bri, 255, 100);
                 } else if (on) {
-                    node.yeelight.set_power(on, null, duration);
+                    node.serverConfig.yeelight.set_power(on, null, duration);
                     return;
                 }
 
@@ -67,47 +62,42 @@ export default function YeeLightNodeOut(RED) {
                 if (currentState.on) {
                     preparePromise = Promise.resolve();
                 } else {
-                    preparePromise = node.yeelight.set_scene('color', rgbIntToTurnTo, 1);
+                    preparePromise = node.serverConfig.yeelight.set_scene(
+                        'color',
+                        rgbIntToTurnTo,
+                        1
+                    );
                 }
 
                 preparePromise
                     .then(() => {
-                        node.yeelight.start_cf(1, 1, flowExpression);
+                        node.serverConfig.yeelight.start_cf(1, 1, flowExpression);
                     })
                     .catch(e => console.log('yeelight error', e));
             });
         };
 
         const onConnected = () => {
-            console.log('connected');
-            clearTimeout(reconnectionTimeout);
             node.status({ fill: 'green', shape: 'dot', text: 'Connected' });
         };
 
-        const onDisconnected = () => {
-            console.log('disconnected');
-            // node.status({ fill: 'red', shape: 'ring', text: 'Disconnected' });
-        };
-
-        const onYeelightError = error => {
-            console.error('error happened', error);
-            reconnectionTimeout = setTimeout(startConnection, 5000);
+        const onYeelightError = (error = {}) => {
             node.status({ fill: 'red', shape: 'ring', text: `Connection error: ${error.code}` });
         };
 
         const startConnection = () => {
-            console.log(
-                'connecting to yeelight...',
-                node.serverConfig.hostname,
-                node.serverConfig.port
-            );
             node.status({ fill: 'yellow', shape: 'ring', text: 'Connecting...' });
-            node.yeelight = new Yeelight(
-                `yeelight://${node.serverConfig.hostname}:${node.serverConfig.port}`
-            );
-            node.yeelight.on('connect', onConnected);
-            node.yeelight.on('error', onYeelightError);
-            node.yeelight.on('disconnect', onDisconnected);
+            node.serverConfig.yeelight.on('connect', onConnected);
+            node.serverConfig.yeelight.on('error', onYeelightError);
+            node.serverConfig.yeelight.on('props', message => {
+                console.log('message', message);
+            });
+            if (node.serverConfig.yeelight.socketState === 'connected') {
+                onConnected();
+            }
+            if (node.serverConfig.yeelight.socketState === 'error') {
+                onYeelightError();
+            }
         };
 
         (function init() {
@@ -120,11 +110,6 @@ export default function YeeLightNodeOut(RED) {
             }
             startConnection();
             node.on('input', onInput);
-            node.on('close', () => {
-                console.log('closing');
-                clearTimeout(reconnectionTimeout);
-                node.yeelight.exit();
-            });
         })();
     };
 }

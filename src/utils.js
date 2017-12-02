@@ -69,6 +69,15 @@ function clamp(x, min, max) {
     return x;
 }
 
+export function hexToRgbInt(hex) {
+    console.log('hexToRgbInt', hex);
+    return parseInt('0x' + hex.replace('#', ''), 16);
+}
+
+export function normalize(value, currentMax = 100, newMax = 255) {
+    return Math.round(parseInt(value, 10) / currentMax * newMax);
+}
+
 export function sanitizeState(state) {
     const { bright, power, name, color_mode } = state;
     const colorModeMap = {
@@ -77,40 +86,38 @@ export function sanitizeState(state) {
         3: 'hs',
     };
     let result = {
-        on: state.power !== 'off',
-        bri: parseInt(bright, 10),
+        state: {
+            on: state.power !== 'off',
+            bri: normalize(bright),
+            colormode: colorModeMap[color_mode],
+        },
         name,
-        colormode: colorModeMap[color_mode],
         raw: state,
     };
     if (state.color_mode === '1') {
         const hex = rgbIntToHex(state.rgb);
-        result = {
-            ...result,
+        result.state = {
+            ...result.state,
             hex,
-            hue: convert.hex.hsv(hex)[0],
-            sat: convert.hex.hsv(hex)[1],
+            hue: normalize(convert.hex.hsv(hex)[0], 359, 65535),
+            sat: normalize(convert.hex.hsv(hex)[1]),
         };
     } else if (state.color_mode === '2') {
         const { r: red, g: green, b: blue } = colorTemperatureToRGB(state.ct);
-        result = {
-            ...result,
+        result.state = {
+            ...result.state,
             ct: parseInt(state.ct, 10),
             hex: '#' + convert.rgb.hex(red, green, blue),
-            hue: convert.rgb.hsv(red, green, blue)[0],
-            sat: convert.rgb.hsv(red, green, blue)[1],
+            hue: normalize(convert.rgb.hsv(red, green, blue)[0], 359, 65535),
+            sat: normalize(convert.rgb.hsv(red, green, blue)[1]),
         };
     } else if (state.color_mode === '3') {
-        const hex = convert.hsv.hex(
-            parseInt(state.hue, 10),
-            parseInt(state.sat, 10),
-            parseInt(state.bright, 10)
-        );
-        result = {
-            ...result,
+        const hex = convert.hsv.hex(state.hue, state.sat, state.bright);
+        result.state = {
+            ...result.state,
             hex: '#' + hex,
-            hue: parseInt(state.hue, 10),
-            sat: parseInt(state.sat, 10),
+            hue: normalize(state.hue, 359, 65535),
+            sat: normalize(state.sat),
         };
     }
     return result;
