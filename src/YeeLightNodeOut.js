@@ -12,6 +12,24 @@ export default function YeeLightNodeOut(RED) {
 
         const onInput = msg => {
             console.log(msg.payload);
+            if (typeof msg.payload === 'string') {
+                try {
+                    msg.payload = JSON.parse(msg.payload);
+                } catch (e) {
+                    console.log(
+                        `Yeelight: Error during payload string parsing attempt\n${e}\n${
+                            msg.payload
+                        }`
+                    );
+                    return;
+                }
+            }
+
+            if (typeof msg.payload !== 'object') {
+                console.log(`Yeelight: Invalid payload\n${msg.payload}`);
+                return;
+            }
+
             const { on, hex, bri, hue, sat, duration } = msg.payload;
 
             if (on === false) {

@@ -272,6 +272,10 @@ module.exports = function (RED) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
+// https://github.com/song940/node-yeelight/blob/master/index.js
+
 exports.default = YeeLightNodeOut;
 
 var _yeelight = __webpack_require__(0);
@@ -292,6 +296,20 @@ function YeeLightNodeOut(RED) {
 
         var onInput = function onInput(msg) {
             console.log(msg.payload);
+            if (typeof msg.payload === 'string') {
+                try {
+                    msg.payload = JSON.parse(msg.payload);
+                } catch (e) {
+                    console.log('Yeelight: Error during payload string parsing attempt\n' + e + '\n' + msg.payload);
+                    return;
+                }
+            }
+
+            if (_typeof(msg.payload) !== 'object') {
+                console.log('Yeelight: Invalid payload\n' + msg.payload);
+                return;
+            }
+
             var _msg$payload = msg.payload,
                 on = _msg$payload.on,
                 hex = _msg$payload.hex,
@@ -347,7 +365,9 @@ function YeeLightNodeOut(RED) {
             node.status({ fill: 'green', shape: 'dot', text: 'Connected' });
         };
 
-        var onYeelightError = function onYeelightError(error) {
+        var onYeelightError = function onYeelightError() {
+            var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
             node.status({ fill: 'red', shape: 'ring', text: 'Connection error: ' + error.code });
         };
 
@@ -378,8 +398,7 @@ function YeeLightNodeOut(RED) {
             node.on('input', onInput);
         })();
     };
-} // https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
-// https://github.com/song940/node-yeelight/blob/master/index.js
+}
 
 /***/ }),
 /* 5 */
@@ -419,12 +438,10 @@ function YeeLightNodeState(RED) {
             node.status({ fill: 'green', shape: 'dot', text: 'Connected' });
         };
 
-        var onYeelightError = function onYeelightError(error) {
-            node.status({
-                fill: 'red',
-                shape: 'ring',
-                text: 'Connection error: ' + (error && error.code)
-            });
+        var onYeelightError = function onYeelightError() {
+            var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            node.status({ fill: 'red', shape: 'ring', text: 'Connection error: ' + error.code });
         };
 
         var startConnection = function startConnection() {
