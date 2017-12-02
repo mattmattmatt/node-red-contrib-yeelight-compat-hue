@@ -1,6 +1,6 @@
-import YeeLightNodeOut from './YeeLightNodeOut';
-import YeeLightNodeState from './YeeLightNodeState';
-import YeeLightConfig from './YeeLightConfig';
+import YeeLightNodeOut from './src/YeeLightNodeOut';
+import YeeLightNodeState from './src/YeeLightNodeState';
+import YeeLightConfig from './src/YeeLightConfig';
 
 module.exports = RED => {
     RED.nodes.registerType('yeelight-compat-hue', YeeLightNodeOut(RED));

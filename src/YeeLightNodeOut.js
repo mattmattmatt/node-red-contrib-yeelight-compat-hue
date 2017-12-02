@@ -4,6 +4,8 @@
 import Yeelight from 'yeelight2';
 import convert from 'color-convert';
 
+import { sanitizeState } from './utils';
+
 function hexToRgbInt(hex) {
     console.log('hexToRgbInt', hex);
     return parseInt('0x' + hex.replace('#', ''), 16);
@@ -23,48 +25,54 @@ export default function YeeLightNodeOut(RED) {
                 return;
             }
 
-            node.yeelight.sync().then(currentState => {
-                let hexToTurnTo;
+            node.yeelight.sync().then(state => {
+                const currentState = sanitizeState(state);
+                let rgbIntToTurnTo;
                 let briToTurnTo;
 
                 if (typeof hex !== 'undefined') {
-                    hexToTurnTo = hexToRgbInt(hex);
+                    rgbIntToTurnTo = hexToRgbInt(hex);
+                    briToTurnTo = bri || convert.hex.hsv(hex)[2];
                 } else if (
                     typeof hue !== 'undefined' ||
                     typeof sat !== 'undefined' ||
                     typeof bri !== 'undefined'
                 ) {
-                    hexToTurnTo = hexToRgbInt(
+                    rgbIntToTurnTo = hexToRgbInt(
                         convert.hsv.hex(
-                            hue || parseInt(currentState.hue, 10),
-                            sat || parseInt(currentState.sat, 10),
-                            bri || parseInt(currentState.bright, 10)
+                            hue || currentState.hue,
+                            sat || currentState.sat,
+                            bri || currentState.bright
                         )
                     );
+                    briToTurnTo = bri || currentState.bright;
                 } else if (on) {
                     node.yeelight.set_power(on, null, duration);
                     return;
                 }
 
-                briToTurnTo = convert.hex.hsv(hexToTurnTo)[2];
+                const flowExpression = `${duration || 500}, 1, ${rgbIntToTurnTo}, ${briToTurnTo}`;
 
-                console.log('hexToTurnTo', hexToTurnTo, 'briToTurnTo', briToTurnTo);
+                console.log(
+                    'rgbIntToTurnTo',
+                    rgbIntToTurnTo,
+                    'briToTurnTo',
+                    briToTurnTo,
+                    'flowExpression',
+                    flowExpression
+                );
 
                 let preparePromise;
 
-                if (currentState.power === 'off') {
-                    preparePromise = node.yeelight.set_scene('color', hexToTurnTo, 1);
-                } else {
+                if (currentState.on) {
                     preparePromise = Promise.resolve();
+                } else {
+                    preparePromise = node.yeelight.set_scene('color', rgbIntToTurnTo, 1);
                 }
 
                 preparePromise
                     .then(() => {
-                        node.yeelight.start_cf(
-                            1,
-                            1,
-                            `${duration || 500}, 1, ${hexToTurnTo}, ${briToTurnTo}`
-                        );
+                        node.yeelight.start_cf(1, 1, flowExpression);
                     })
                     .catch(e => console.log('yeelight error', e));
             });

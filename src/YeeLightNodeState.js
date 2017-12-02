@@ -1,20 +1,18 @@
+// https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
+
 import Yeelight from 'yeelight2';
-import convert from 'color-convert';
+
+import { rgbIntToHex, colorTemperatureToRGB, sanitizeState } from './utils';
 
 export default function YeeLightNodeState(RED) {
     return function(config) {
         const node = this;
         let reconnectionTimeout;
 
+        // on, hex, bri, hue, sat, duration
         const onInput = msg => {
             node.yeelight.sync().then(state => {
-                msg.payload = state;
-                msg.payload.on = state.power !== 'off';
-                msg.payload.hex = convert.hsv.hex(
-                    parseInt(state.hue, 10),
-                    parseInt(state.sat, 10),
-                    parseInt(state.bright, 10)
-                );
+                msg.payload = sanitizeState(state);
                 node.send(msg);
             });
         };
