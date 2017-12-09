@@ -7,12 +7,20 @@ import { rgbIntToHex, colorTemperatureToRGB, sanitizeState } from './utils';
 export default function YeeLightNodeState(RED) {
     return function(config) {
         const node = this;
+        let lastSentState;
 
         // on, hex, bri, hue, sat, duration
         const onInput = msg => {
             node.serverConfig.yeelight.sync().then(state => {
                 msg.payload = sanitizeState(state);
-                node.send(msg);
+                // only send message if new information or if requested by input
+                if (
+                    JSON.stringify(msg.payload) !== JSON.stringify(lastSentState) ||
+                    Object.keys(msg).length > 1
+                ) {
+                    node.send(msg);
+                    lastSentState = msg.payload;
+                }
             });
         };
 
@@ -46,6 +54,11 @@ export default function YeeLightNodeState(RED) {
             }
             startConnection();
             node.on('input', onInput);
+            node.serverConfig.yeelight.on('props', message => {
+                if (message.flowing === undefined || Object.keys(message).length > 1) {
+                    onInput({});
+                }
+            });
         })();
     };
 }

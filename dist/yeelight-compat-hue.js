@@ -174,7 +174,6 @@ function clamp(x, min, max) {
 }
 
 function hexToRgbInt(hex) {
-    console.log('hexToRgbInt', hex);
     return parseInt('0x' + hex.replace('#', ''), 16);
 }
 
@@ -295,18 +294,17 @@ function YeeLightNodeOut(RED) {
         var node = this;
 
         var onInput = function onInput(msg) {
-            console.log(msg.payload);
             if (typeof msg.payload === 'string') {
                 try {
                     msg.payload = JSON.parse(msg.payload);
                 } catch (e) {
-                    console.log('Yeelight: Error during payload string parsing attempt\n' + e + '\n' + msg.payload);
+                    node.error('Yeelight: Error during payload parsing\n' + e + '\n' + msg.payload);
                     return;
                 }
             }
 
             if (_typeof(msg.payload) !== 'object') {
-                console.log('Yeelight: Invalid payload\n' + msg.payload);
+                node.error('Yeelight: Invalid payload\n' + msg.payload);
                 return;
             }
 
@@ -326,7 +324,6 @@ function YeeLightNodeOut(RED) {
 
             node.serverConfig.yeelight.sync().then(function (state) {
                 var currentState = (0, _utils.sanitizeState)(state).state;
-                console.log('currentState', currentState);
                 var rgbIntToTurnTo = void 0;
                 var briToTurnTo = void 0;
 
@@ -342,8 +339,6 @@ function YeeLightNodeOut(RED) {
                 }
 
                 var flowExpression = (duration || 500) + ', 1, ' + rgbIntToTurnTo + ', ' + briToTurnTo;
-
-                console.log('rgbIntToTurnTo', rgbIntToTurnTo, 'briToTurnTo', briToTurnTo, 'flowExpression', flowExpression);
 
                 var preparePromise = void 0;
 
@@ -375,9 +370,6 @@ function YeeLightNodeOut(RED) {
             node.status({ fill: 'yellow', shape: 'ring', text: 'Connecting...' });
             node.serverConfig.yeelight.on('connect', onConnected);
             node.serverConfig.yeelight.on('error', onYeelightError);
-            node.serverConfig.yeelight.on('props', function (message) {
-                console.log('message', message);
-            });
             if (node.serverConfig.yeelight.socketState === 'connected') {
                 onConnected();
             }
@@ -425,12 +417,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function YeeLightNodeState(RED) {
     return function (config) {
         var node = this;
+        var lastSentState = void 0;
 
         // on, hex, bri, hue, sat, duration
         var onInput = function onInput(msg) {
             node.serverConfig.yeelight.sync().then(function (state) {
                 msg.payload = (0, _utils.sanitizeState)(state);
-                node.send(msg);
+                // only send message if new information or if requested by input
+                if (JSON.stringify(msg.payload) !== JSON.stringify(lastSentState) || Object.keys(msg).length > 1) {
+                    node.send(msg);
+                    lastSentState = msg.payload;
+                }
             });
         };
 
@@ -466,6 +463,11 @@ function YeeLightNodeState(RED) {
             }
             startConnection();
             node.on('input', onInput);
+            node.serverConfig.yeelight.on('props', function (message) {
+                if (message.flowing === undefined || Object.keys(message).length > 1) {
+                    onInput({});
+                }
+            });
         })();
     };
 }
@@ -498,13 +500,13 @@ function YeeLightConfig(RED) {
         var reconnectionTimeout = void 0;
 
         var onConnected = function onConnected() {
-            console.log('Connected to ' + host);
+            node.log('Connected to ' + host);
             clearTimeout(reconnectionTimeout);
             node.yeelight.socketState = 'connected';
         };
 
         var onDisconnected = function onDisconnected() {
-            console.log('Disconnected from ' + host);
+            node.log('Disconnected from ' + host);
         };
 
         var onYeelightError = function onYeelightError(error) {
@@ -514,7 +516,7 @@ function YeeLightConfig(RED) {
         };
 
         var startConnection = function startConnection() {
-            console.log('Connecting to yeelight:', host);
+            node.log('Connecting to Yeelight ' + host);
             node.yeelight = new _yeelight2.default('yeelight://' + host);
             node.yeelight.socketState = 'connecting';
             node.yeelight.on('connect', onConnected);

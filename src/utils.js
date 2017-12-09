@@ -70,7 +70,6 @@ function clamp(x, min, max) {
 }
 
 export function hexToRgbInt(hex) {
-    console.log('hexToRgbInt', hex);
     return parseInt('0x' + hex.replace('#', ''), 16);
 }
 

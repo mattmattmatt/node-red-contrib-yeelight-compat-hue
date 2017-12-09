@@ -8,13 +8,13 @@ export default function YeeLightConfig(RED) {
         let reconnectionTimeout;
 
         const onConnected = () => {
-            console.log(`Connected to ${host}`);
+            node.log(`Connected to ${host}`);
             clearTimeout(reconnectionTimeout);
             node.yeelight.socketState = 'connected';
         };
 
         const onDisconnected = () => {
-            console.log(`Disconnected from ${host}`);
+            node.log(`Disconnected from ${host}`);
         };
 
         const onYeelightError = error => {
@@ -24,7 +24,7 @@ export default function YeeLightConfig(RED) {
         };
 
         const startConnection = () => {
-            console.log('Connecting to yeelight:', host);
+            node.log(`Connecting to Yeelight ${host}`);
             node.yeelight = new Yeelight(`yeelight://${host}`);
             node.yeelight.socketState = 'connecting';
             node.yeelight.on('connect', onConnected);

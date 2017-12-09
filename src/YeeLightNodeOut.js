@@ -11,22 +11,17 @@ export default function YeeLightNodeOut(RED) {
         const node = this;
 
         const onInput = msg => {
-            console.log(msg.payload);
             if (typeof msg.payload === 'string') {
                 try {
                     msg.payload = JSON.parse(msg.payload);
                 } catch (e) {
-                    console.log(
-                        `Yeelight: Error during payload string parsing attempt\n${e}\n${
-                            msg.payload
-                        }`
-                    );
+                    node.error(`Yeelight: Error during payload parsing\n${e}\n${msg.payload}`);
                     return;
                 }
             }
 
             if (typeof msg.payload !== 'object') {
-                console.log(`Yeelight: Invalid payload\n${msg.payload}`);
+                node.error(`Yeelight: Invalid payload\n${msg.payload}`);
                 return;
             }
 
@@ -39,7 +34,6 @@ export default function YeeLightNodeOut(RED) {
 
             node.serverConfig.yeelight.sync().then(state => {
                 const currentState = sanitizeState(state).state;
-                console.log('currentState', currentState);
                 let rgbIntToTurnTo;
                 let briToTurnTo;
 
@@ -65,15 +59,6 @@ export default function YeeLightNodeOut(RED) {
                 }
 
                 const flowExpression = `${duration || 500}, 1, ${rgbIntToTurnTo}, ${briToTurnTo}`;
-
-                console.log(
-                    'rgbIntToTurnTo',
-                    rgbIntToTurnTo,
-                    'briToTurnTo',
-                    briToTurnTo,
-                    'flowExpression',
-                    flowExpression
-                );
 
                 let preparePromise;
 
@@ -107,9 +92,6 @@ export default function YeeLightNodeOut(RED) {
             node.status({ fill: 'yellow', shape: 'ring', text: 'Connecting...' });
             node.serverConfig.yeelight.on('connect', onConnected);
             node.serverConfig.yeelight.on('error', onYeelightError);
-            node.serverConfig.yeelight.on('props', message => {
-                console.log('message', message);
-            });
             if (node.serverConfig.yeelight.socketState === 'connected') {
                 onConnected();
             }
