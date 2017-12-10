@@ -40,7 +40,7 @@ export default function YeeLightConfig(RED) {
                 startConnection();
 
                 node.on('close', () => {
-                    console.log('closing');
+                    node.log('Closing connection');
                     clearTimeout(reconnectionTimeout);
                     node.yeelight.exit();
                 });

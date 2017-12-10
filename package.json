@@ -2,7 +2,7 @@
   "name": "node-red-contrib-yeelight-compat-hue",
   "version": "0.0.4",
   "description": "A node-red node for controlling Yeelight lighting devices, compatible with node-red-contrib-node-hue flows.",
-  "main": "dist/yeelight-compat-hue.js",
+  "main": "dist/yeelight-compat-hue-out.js",
   "files": [
     "dist"
   ],
@@ -18,7 +18,7 @@
     "dist-clean": "rm -rf dist",
     "dev": "npm run build-watch | npm run watch-run-red",
     "build-watch": "webpack --config tooling/webpack.config.babel.js --watch",
-    "watch-run-red": "nodemon --watch dist/*.js --watch dist/*.html --exec 'node-red -v'",
+    "watch-run-red": "nodemon --exec 'node-red -v ~/.node-red/flows.json' --watch 'dist/*.js' --watch 'dist/*.html'",
     "build": "webpack --config tooling/webpack.config.babel.js",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
@@ -35,7 +35,9 @@
   "homepage": "https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue#readme",
   "node-red": {
     "nodes": {
-      "yeelight-compat-hue": "dist/yeelight-compat-hue.js"
+      "yeelight-compat-hue-out": "dist/yeelight-compat-hue-out.js",
+      "yeelight-compat-hue-state": "dist/yeelight-compat-hue-state.js",
+      "yeelight-compat-hue-config": "dist/yeelight-compat-hue-config.js"
     }
   },
   "eslintConfig": {

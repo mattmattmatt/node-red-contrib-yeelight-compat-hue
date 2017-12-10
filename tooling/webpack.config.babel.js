@@ -6,9 +6,13 @@ const copyPlugin = new CopyWebpackPlugin([{ from: './*.html' }], {
 });
 
 module.exports = {
-    entry: './yeelight-compat-hue.js',
+    entry: {
+        'yeelight-compat-hue-out': './yeelight-compat-hue-out.js',
+        'yeelight-compat-hue-state': './yeelight-compat-hue-state.js',
+        'yeelight-compat-hue-config': './yeelight-compat-hue-config.js',
+    },
     output: {
-        filename: 'yeelight-compat-hue.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, '../dist'),
         library: 'yeelight-compat-hue',
         libraryTarget: 'umd',

@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -235,165 +235,26 @@ function sanitizeState(state) {
 }
 
 /***/ }),
-/* 3 */
+/* 3 */,
+/* 4 */,
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _YeeLightNodeOut = __webpack_require__(4);
-
-var _YeeLightNodeOut2 = _interopRequireDefault(_YeeLightNodeOut);
-
-var _YeeLightNodeState = __webpack_require__(5);
+var _YeeLightNodeState = __webpack_require__(6);
 
 var _YeeLightNodeState2 = _interopRequireDefault(_YeeLightNodeState);
-
-var _YeeLightConfig = __webpack_require__(6);
-
-var _YeeLightConfig2 = _interopRequireDefault(_YeeLightConfig);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = function (RED) {
-    RED.nodes.registerType('yeelight-compat-hue', (0, _YeeLightNodeOut2.default)(RED));
-    RED.nodes.registerType('yeelight-compat-hue-config', (0, _YeeLightConfig2.default)(RED));
     RED.nodes.registerType('yeelight-compat-hue-state', (0, _YeeLightNodeState2.default)(RED));
 };
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
-// https://github.com/song940/node-yeelight/blob/master/index.js
-
-exports.default = YeeLightNodeOut;
-
-var _yeelight = __webpack_require__(0);
-
-var _yeelight2 = _interopRequireDefault(_yeelight);
-
-var _colorConvert = __webpack_require__(1);
-
-var _colorConvert2 = _interopRequireDefault(_colorConvert);
-
-var _utils = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function YeeLightNodeOut(RED) {
-    return function (config) {
-        var node = this;
-
-        var onInput = function onInput(msg) {
-            if (typeof msg.payload === 'string') {
-                try {
-                    msg.payload = JSON.parse(msg.payload);
-                } catch (e) {
-                    node.error('Yeelight: Error during payload parsing\n' + e + '\n' + msg.payload);
-                    return;
-                }
-            }
-
-            if (_typeof(msg.payload) !== 'object') {
-                node.error('Yeelight: Invalid payload\n' + msg.payload);
-                return;
-            }
-
-            var _msg$payload = msg.payload,
-                on = _msg$payload.on,
-                hex = _msg$payload.hex,
-                bri = _msg$payload.bri,
-                hue = _msg$payload.hue,
-                sat = _msg$payload.sat,
-                duration = _msg$payload.duration;
-
-
-            if (on === false) {
-                node.serverConfig.yeelight.set_power(on, null, duration);
-                return;
-            }
-
-            node.serverConfig.yeelight.sync().then(function (state) {
-                var currentState = (0, _utils.sanitizeState)(state).state;
-                var rgbIntToTurnTo = void 0;
-                var briToTurnTo = void 0;
-
-                if (typeof hex !== 'undefined') {
-                    rgbIntToTurnTo = (0, _utils.hexToRgbInt)(hex);
-                    briToTurnTo = bri && (0, _utils.normalize)(bri, 255, 100) || _colorConvert2.default.hex.hsv(hex)[2];
-                } else if (typeof hue !== 'undefined' || typeof sat !== 'undefined' || typeof bri !== 'undefined') {
-                    rgbIntToTurnTo = (0, _utils.hexToRgbInt)(_colorConvert2.default.hsv.hex((0, _utils.normalize)(hue || currentState.hue, 65535, 359), (0, _utils.normalize)(sat || currentState.sat, 255, 100), (0, _utils.normalize)(bri || currentState.bri, 255, 100)));
-                    briToTurnTo = (0, _utils.normalize)(bri || currentState.bri, 255, 100);
-                } else if (on) {
-                    node.serverConfig.yeelight.set_power(on, null, duration);
-                    return;
-                }
-
-                var flowExpression = (duration || 500) + ', 1, ' + rgbIntToTurnTo + ', ' + briToTurnTo;
-
-                var preparePromise = void 0;
-
-                if (currentState.on) {
-                    preparePromise = Promise.resolve();
-                } else {
-                    preparePromise = node.serverConfig.yeelight.set_scene('color', rgbIntToTurnTo, 1);
-                }
-
-                preparePromise.then(function () {
-                    node.serverConfig.yeelight.start_cf(1, 1, flowExpression);
-                }).catch(function (e) {
-                    return console.log('yeelight error', e);
-                });
-            });
-        };
-
-        var onConnected = function onConnected() {
-            node.status({ fill: 'green', shape: 'dot', text: 'Connected' });
-        };
-
-        var onYeelightError = function onYeelightError() {
-            var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            node.status({ fill: 'red', shape: 'ring', text: 'Connection error: ' + error.code });
-        };
-
-        var startConnection = function startConnection() {
-            node.status({ fill: 'yellow', shape: 'ring', text: 'Connecting...' });
-            node.serverConfig.yeelight.on('connect', onConnected);
-            node.serverConfig.yeelight.on('error', onYeelightError);
-            if (node.serverConfig.yeelight.socketState === 'connected') {
-                onConnected();
-            }
-            if (node.serverConfig.yeelight.socketState === 'error') {
-                onYeelightError();
-            }
-        };
-
-        (function init() {
-            RED.nodes.createNode(node, config);
-            node.serverConfig = RED.nodes.getNode(config.server);
-
-            if (!node.serverConfig || !node.serverConfig.hostname) {
-                node.status({ fill: 'red', shape: 'ring', text: 'Hostname not set' });
-                return;
-            }
-            startConnection();
-            node.on('input', onInput);
-        })();
-    };
-}
-
-/***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -468,75 +329,6 @@ function YeeLightNodeState(RED) {
                     onInput({});
                 }
             });
-        })();
-    };
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = YeeLightConfig;
-
-var _yeelight = __webpack_require__(0);
-
-var _yeelight2 = _interopRequireDefault(_yeelight);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function YeeLightConfig(RED) {
-    return function (config) {
-        var node = this;
-        var hostname = config.hostname,
-            port = config.port;
-
-        var host = hostname + ':' + port;
-        var reconnectionTimeout = void 0;
-
-        var onConnected = function onConnected() {
-            node.log('Connected to ' + host);
-            clearTimeout(reconnectionTimeout);
-            node.yeelight.socketState = 'connected';
-        };
-
-        var onDisconnected = function onDisconnected() {
-            node.log('Disconnected from ' + host);
-        };
-
-        var onYeelightError = function onYeelightError(error) {
-            console.error('Error at ' + host, error);
-            reconnectionTimeout = setTimeout(startConnection, 5000);
-            node.yeelight.socketState = 'error';
-        };
-
-        var startConnection = function startConnection() {
-            node.log('Connecting to Yeelight ' + host);
-            node.yeelight = new _yeelight2.default('yeelight://' + host);
-            node.yeelight.socketState = 'connecting';
-            node.yeelight.on('connect', onConnected);
-            node.yeelight.on('error', onYeelightError);
-            node.yeelight.on('disconnect', onDisconnected);
-        };
-
-        (function init() {
-            RED.nodes.createNode(node, config);
-            node.hostname = hostname;
-            node.port = port;
-            if (hostname && port) {
-                startConnection();
-
-                node.on('close', function () {
-                    console.log('closing');
-                    clearTimeout(reconnectionTimeout);
-                    node.yeelight.exit();
-                });
-            }
         })();
     };
 }

@@ -1,0 +1,80 @@
+<script type="text/javascript">
+    RED.nodes.registerType('yeelight-compat-hue-state', {
+        category: 'lights',
+        color: '#E2D96E',
+        defaults: {
+            name: {
+                value: ''
+            },
+            server: {
+                value: '',
+                required: true,
+                type: 'yeelight-compat-hue-config'
+            },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'light.png',
+        label: function() {
+            var server = RED.nodes.node(this.server);
+            return this.name || server ? server.label().replace(/\s\(.+\)/, '') : 'yeelight';
+        },
+        paletteLabel: 'yeelight',
+    });
+</script>
+
+<script type="text/x-red"
+    data-template-name="yeelight-compat-hue-state">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Yeelight</label>
+        <input type="text" id="node-input-server" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text"
+            id="node-input-name"
+            placeholder="Name" />
+    </div>
+</script>
+
+<script type="text/x-red"
+    data-help-name="yeelight-compat-hue-state">
+    <p>Returns the current state of the selected Yeelight device.</p>
+    <h3>Outputs</h3>
+     <dl class="message-properties">
+         <dt>payload <span class="property-type">object</span></dt>
+         <dd>an object containing the current state of the selected Yeelight device.</dd>
+     </dl>
+     <h3>Details</h3>
+     <p>The node will listen to changes of the connected Yeelight and send a message whenever a change is detected. The <code>payload</code> property of the message will be set to the new state of the Yeelight.</p>
+     <p>Additionally, a fresh state can be requested from the connected Yeelight by sending a message to the node. The <code>payload</code> property of the message will be overwritten with the state of the Yeelight. All other properties of the <code>msg</code> are preserved.</p>
+
+     <h4>Example output</h4>
+     <p>
+     <pre><code>{
+    "state": {
+        "on": false,
+        "bri": 255,
+        "colormode": "rgb",
+        "hex": "#ff1500",
+        "hue": 913,
+        "sat": 255
+    },
+    "name": "Closet",
+    "raw": {
+        "name": "",
+        "power": "off",
+        "bright": "100",
+        "rgb": "16717056",
+        "ct": "4244",
+        "hue": "0",
+        "sat": "100",
+        "color_mode": "1",
+        "delayoff": "0",
+        "flowing": "0",
+        "flow_params": "0,1,10000,1,16711680,69,33000,1,16711882,34,39000,1,16744704,17,34000,1,16711680,61",
+        "music_on": "0"
+    }
+}</code></pre>
+     </p>
+</script>
