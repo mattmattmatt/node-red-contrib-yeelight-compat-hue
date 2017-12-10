@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/node-red-contrib-yeelight-compat-hue.svg)](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue) [![nodeyeelight-compat-hue](https://img.shields.io/badge/Node--RED-yeelight--compat--hue-brightgreen.svg)](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue) [![Github All Releases](https://img.shields.io/github/downloads/mattmattmatt/node-red-contrib-yeelight-compat-hue/total.svg)](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
+[![npm](https://img.shields.io/npm/v/node-red-contrib-yeelight-compat-hue.svg)](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue) [![nodeyeelight-compat-hue](https://img.shields.io/badge/Node--RED-yeelight--compat--hue-brightgreen.svg)](https://flows.nodered.org/node/node-red-contrib-yeelight-compat-hue) [![Github All Releases](https://img.shields.io/github/downloads/mattmattmatt/node-red-contrib-yeelight-compat-hue/total.svg)](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
 
 # node-red-contrib-yeelight-compat-hue
 
@@ -16,7 +16,7 @@ npm i node-red-contrib-yeelight-compat-hue -S
 
 Provides two palette nodes – one to send control commands to a Yeelight, and one to receive messages when a Yeelight's state changes.
 
-![](./tooling/nodes.png)
+![](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/blob/master/tooling/nodes.png?raw=true)
 
 ### Output
 
