@@ -2,7 +2,7 @@
 
 import Yeelight from 'yeelight2';
 
-import { rgbIntToHex, colorTemperatureToRGB, sanitizeState } from './utils';
+import { rgbIntToHex, sanitizeState } from './utils';
 
 export default function YeeLightNodeState(RED) {
     return function(config) {
