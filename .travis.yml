@@ -12,9 +12,8 @@ cache:
 jobs:
     include:
         - stage: unit tests
-          script: node -v
-        - script: npm -v
+          script: npm test
         - stage: build
-          script: npm test && npm run build && echo "✅ Done"
+          script: npm run build && echo "✅ Done"
         - stage: publish
           script: npm run build && npm run semantic-release && echo "✅ Done"
