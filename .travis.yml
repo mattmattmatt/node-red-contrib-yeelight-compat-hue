@@ -12,9 +12,9 @@ cache:
 jobs:
     include:
         - stage: unit tests
-        - node -v
+          node -v
         - npm -v
         - stage: build
-        - npm test && npm run build && echo "✅ Done"
+          npm test && npm run build && echo "✅ Done"
         - stage: publish
-        - npm run build && npm run semantic-release && echo "✅ Done"
+          npm run build && npm run semantic-release && echo "✅ Done"
