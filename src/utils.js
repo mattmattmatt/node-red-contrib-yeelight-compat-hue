@@ -26,7 +26,7 @@ export function rgbIntToHex(number) {
     );
 }
 
-export function colorTemperatureToRGB(kelvin) {
+export function colorTemperatureToRgb(kelvin) {
     var temp = kelvin / 100;
     var red, green, blue;
 
@@ -52,9 +52,9 @@ export function colorTemperatureToRGB(kelvin) {
     }
 
     return {
-        r: clamp(red, 0, 255),
-        g: clamp(green, 0, 255),
-        b: clamp(blue, 0, 255),
+        red: clamp(red, 0, 255),
+        green: clamp(green, 0, 255),
+        blue: clamp(blue, 0, 255),
     };
 }
 
@@ -71,6 +71,11 @@ function clamp(x, min, max) {
 
 export function hexToRgbInt(hex) {
     return parseInt('0x' + hex.replace('#', ''), 16);
+}
+
+export function colorTemperatureToRgbInt(ct) {
+    const { red, green, blue } = colorTemperatureToRgb(ct);
+    return hexToRgbInt('#' + convert.rgb.hex(red, green, blue));
 }
 
 export function normalize(value, currentMax = 100, newMax = 255) {
@@ -102,7 +107,7 @@ export function sanitizeState(state) {
             sat: normalize(convert.hex.hsv(hex)[1]),
         };
     } else if (state.color_mode === '2') {
-        const { r: red, g: green, b: blue } = colorTemperatureToRGB(state.ct);
+        const { red, green, blue } = colorTemperatureToRgb(state.ct);
         result.state = {
             ...result.state,
             ct: parseInt(state.ct, 10),

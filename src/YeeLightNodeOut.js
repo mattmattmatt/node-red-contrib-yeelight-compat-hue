@@ -4,7 +4,7 @@
 import Yeelight from 'yeelight2';
 import convert from 'color-convert';
 
-import { sanitizeState, hexToRgbInt, normalize } from './utils';
+import { sanitizeState, hexToRgbInt, normalize, colorTemperatureToRgbInt } from './utils';
 
 export default function YeeLightNodeOut(RED) {
     return function(config) {
@@ -25,7 +25,7 @@ export default function YeeLightNodeOut(RED) {
                 return;
             }
 
-            const { on, hex, bri, hue, sat, duration } = msg.payload;
+            const { on, hex, bri, hue, sat, duration, ct } = msg.payload;
 
             if (on === false) {
                 node.serverConfig.yeelight.set_power(on, null, duration);
@@ -37,7 +37,10 @@ export default function YeeLightNodeOut(RED) {
                 let rgbIntToTurnTo;
                 let briToTurnTo;
 
-                if (typeof hex !== 'undefined') {
+                if (typeof ct !== 'undefined') {
+                    rgbIntToTurnTo = colorTemperatureToRgbInt(ct);
+                    briToTurnTo = normalize(bri || currentState.bri, 255, 100);
+                } else if (typeof hex !== 'undefined') {
                     rgbIntToTurnTo = hexToRgbInt(hex);
                     briToTurnTo = (bri && normalize(bri, 255, 100)) || convert.hex.hsv(hex)[2];
                 } else if (

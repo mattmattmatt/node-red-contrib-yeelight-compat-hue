@@ -10,6 +10,7 @@
 
 [Node-RED](http://nodered.org) nodes to control [MiHome/Xiaomi Yeelights](https://www.yeelight.com/) from your smart home, somewhat [API compatible with node-red-contrib-node-hue nodes](https://github.com/jdomeij/node-red-contrib-node-hue#input-node).
 
+
 ## Install
 
 Run the following command in your Node-RED user directory – typically `~/.node-red`:
@@ -24,6 +25,7 @@ Provides two palette nodes – one to send control commands to a Yeelight, and o
 
 ![](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/blob/master/tooling/nodes.png?raw=true)
 
+
 ### Output node
 
 Sets the state of the selected Yeelight device.
@@ -34,6 +36,7 @@ Sets the state of the selected Yeelight device.
 | :---| :---|
 | `on`   | Sets the `on` state where the value is `true` or `false`|
 | `bri`   | Sets the brightness value from `0` to `255` |
+| `ct`   | Sets the color temperature value in Kelvin from `1700` to `6500` |
 | `hue` | Sets the hue value from `0` to `65535` |
 | `sat`  | Sets the saturation value from `0` to `255`  |
 | `hex`  | Sets the rgb value from `#00000` to `#FFFFFF`   |
@@ -57,12 +60,17 @@ Sets the state of the selected Yeelight device.
     "hex": "#AA00CC",
 }
 ```
-The node supports sending [hex values](http://htmlcolorcodes.com/) and [HSV values](https://alloyui.com/examples/color-picker/hsv).  
+```JSON
+{
+    "ct": 2200,
+}
+```
+The node supports sending [color temperature values](http://www.erco.com/service/rgbw/), [hex values](http://htmlcolorcodes.com/) and [HSV values](https://alloyui.com/examples/color-picker/hsv).  
 The brightness value will always have to be provided separately and will not be deducted from e.g. a hex value's brightness component.
-
 
 ##### References
 This node's input payload structure is based on [node-red-contrib-node-hue](https://github.com/jdomeij/node-red-contrib-node-hue#input-node), which is based on [Node Hue API](https://github.com/peter-murray/node-hue-api#lightstate-options).
+
 
 ### Input node
 
@@ -105,6 +113,7 @@ Additionally, a fresh state can be requested from the connected Yeelight by send
 
 The `raw` property of `msg.payload` contains the raw state information retrieved from the Yeelight for advanced usage.  
 Note that value scales are not compatible with _node-red-contrib-node-hue_, and that `hue` value and `rgb` value will not match since only the correct color per `color_mode` is returned by the lamp.
+
 
 ### Configuration node
 
