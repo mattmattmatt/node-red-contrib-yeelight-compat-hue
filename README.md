@@ -5,7 +5,7 @@
 
 # node-red-contrib-yeelight-compat-hue
 
-[Node-RED](http://nodered.org) nodes to control [Xiaomi Yeelights](https://www.yeelight.com/) from your smart home, somewhat [API compatible with node-red-contrib-node-hue nodes](https://github.com/jdomeij/node-red-contrib-node-hue#input-node).
+[Node-RED](http://nodered.org) nodes to control [MiHome/Xiaomi Yeelights](https://www.yeelight.com/) from your smart home, somewhat [API compatible with node-red-contrib-node-hue nodes](https://github.com/jdomeij/node-red-contrib-node-hue#input-node).
 
 ## Install
 
@@ -119,3 +119,9 @@ Configures a Yeelight connection to one light in the local network.
 
 ## Support
 If something is not working as expected, or if you think this node could be improved in other ways, [please file an issue](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/issues/new) on GitHub.
+
+### Links
+
+ - Find [node-red-contrib-yeelight-compat-hue in the Node-RED flow library](https://flows.nodered.org/node/node-red-contrib-yeelight-compat-hue)
+ - Find  [node-red-contrib-yeelight-compat-hue on npm](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue)
+ - Find [node-red-contrib-yeelight-compat-hue on GitHub](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)

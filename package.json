@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-yeelight-compat-hue",
   "version": "1.0.1",
-  "description": "A node-red node for controlling Yeelight lighting devices, compatible with node-red-contrib-node-hue flows.",
+  "description": "A collection of Node-RED nodes for controlling and observing Yeelight lighting devices, compatible with node-red-contrib-node-hue flows.",
   "main": "dist/yeelight-compat-hue-out.js",
   "files": [
     "dist"
@@ -12,7 +12,9 @@
     "yeelights",
     "hue",
     "mihome",
-    "xiaomi"
+    "xiaomi",
+    "smart home",
+    "automation"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
