@@ -31,7 +31,7 @@
     "url": "git+https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue.git"
   },
   "author": "mattmattmatt",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/issues"
   },
