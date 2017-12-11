@@ -21,7 +21,7 @@ Provides two palette nodes – one to send control commands to a Yeelight, and o
 
 ![](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/blob/master/tooling/nodes.png?raw=true)
 
-### Output
+### Output node
 
 Sets the state of the selected Yeelight device.
 
@@ -61,7 +61,7 @@ The brightness value will always have to be provided separately and will not be 
 ##### References
 This node's input payload structure is based on [node-red-contrib-node-hue](https://github.com/jdomeij/node-red-contrib-node-hue#input-node), which is based on [Node Hue API](https://github.com/peter-murray/node-hue-api#lightstate-options).
 
-### Input
+### Input node
 
 Returns the current state of the selected Yeelight device.
 
@@ -103,7 +103,7 @@ Additionally, a fresh state can be requested from the connected Yeelight by send
 The `raw` property of `msg.payload` contains the raw state information retrieved from the Yeelight for advanced usage.  
 Note that value scales are not compatible with _node-red-contrib-node-hue_, and that `hue` value and `rgb` value will not match since only the correct color per `color_mode` is returned by the lamp.
 
-### Configuration
+### Configuration node
 
 Configures a Yeelight connection to one light in the local network.
 
