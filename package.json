@@ -75,7 +75,7 @@
     "dist/*"
   ],
   "release": {
-    "dryRun": true,
+    "dryRun": false,
     "debug": true
   },
   "devDependencies": {

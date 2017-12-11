@@ -17,3 +17,9 @@ jobs:
           script: npm run build && echo "✅ Done"
         - stage: publish
           script: npm run build && npm run semantic-release && echo "✅ Done"
+
+stages:
+  - unit tests
+  - build
+  - name: publish
+    if: branch = master
