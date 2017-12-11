@@ -9,15 +9,12 @@ cache:
   directories:
     - "node_modules"
 
-branches:
-  only:
-  - master
-
-script:
-    - node -v
-    - npm -v
-    - npm test && npm run build && echo "✅ Done"
-    - ls -al dist
-
-after_success:
-  - npm run semantic-release
+jobs:
+    include:
+        - stage: unit tests
+        - node -v
+        - npm -v
+        - stage: build
+        - npm test && npm run build && echo "✅ Done"
+        - stage: publish
+        - npm run build && npm run semantic-release && echo "✅ Done"
