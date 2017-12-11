@@ -11,15 +11,14 @@ cache:
 
 jobs:
     include:
-        - stage: unit tests
-          script: npm test
-        - stage: build
-          script: npm run build && echo "✅ Done"
-        - stage: publish
-          script: npm run build && npm run semantic-release && echo "✅ Done"
+        - stage: branch test
+          script: npm test && npm run build
+        - stage: npm publish
+          script: npm test && npm run build
+          after_success: npm run semantic-release && echo "✅ Done"
 
 stages:
-  - unit tests
-  - build
-  - name: publish
+  - name: branch test
+    if: branch != master
+  - name: npm publish
     if: branch = master
