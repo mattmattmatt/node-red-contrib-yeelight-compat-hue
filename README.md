@@ -1,7 +1,10 @@
-[![nodeyeelight-compat-hue](https://img.shields.io/badge/Node--RED-yeelight--compat--hue-ee0077.svg)](https://flows.nodered.org/node/node-red-contrib-yeelight-compat-hue)
 [![npm version](https://img.shields.io/npm/v/node-red-contrib-yeelight-compat-hue.svg)](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue)
+[![Travis build status](https://img.shields.io/travis/mattmattmatt/node-red-contrib-yeelight-compat-hue/master.svg)](https://travis-ci.org/mattmattmatt/node-red-contrib-yeelight-compat-hue)
+[![GitHub last commit](https://img.shields.io/github/last-commit/mattmattmatt/node-red-contrib-yeelight-compat-hue.svg)](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
 [![npm downloads](https://img.shields.io/npm/dt/node-red-contrib-yeelight-compat-hue.svg)](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue)
-[![GitHub issues](https://img.shields.io/github/issues/mattmattmatt/node-red-contrib-yeelight-compat-hue.svg)](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
+
+[![nodeyeelight-compat-hue](https://img.shields.io/badge/Node--RED-yeelight--compat--hue-ee0077.svg)](https://flows.nodered.org/node/node-red-contrib-yeelight-compat-hue)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 # node-red-contrib-yeelight-compat-hue
 
