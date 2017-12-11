@@ -19,10 +19,10 @@
   "scripts": {
     "test": "echo \"No tests yet\"",
     "dist-clean": "rm -rf dist",
-    "dev": "npm run build-watch | npm run watch-run-red",
-    "build-watch": "webpack --config tooling/webpack.config.babel.js --watch",
-    "watch-run-red": "nodemon --exec 'node-red -v ~/.node-red/flows.json' --watch 'dist/*.js' --watch 'dist/*.html'",
     "build": "webpack --config tooling/webpack.config.babel.js",
+    "red": "node-red -v ~/.node-red/flows.json",
+    "build-red": "npm run build | npm run red",
+    "dev": "nodemon --ext js,html,json --exec \"npm run build-red\" --ignore \"dist/\" ",
     "semantic-release": "semantic-release",
     "commitmsg": "commitlint -x \"@commitlint/config-conventional\" -e $GIT_PARAMS"
   },
