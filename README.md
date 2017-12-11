@@ -59,9 +59,9 @@ The brightness value will always have to be provided separately and will not be 
 
 
 ##### References
- This node's input payload structure is based on [node-red-contrib-node-hue](https://github.com/jdomeij/node-red-contrib-node-hue#input-node), which is based on [Node Hue API](https://github.com/peter-murray/node-hue-api#lightstate-options).
+This node's input payload structure is based on [node-red-contrib-node-hue](https://github.com/jdomeij/node-red-contrib-node-hue#input-node), which is based on [Node Hue API](https://github.com/peter-murray/node-hue-api#lightstate-options).
 
- ### Input
+### Input
 
 Returns the current state of the selected Yeelight device.
 
@@ -118,7 +118,7 @@ Configures a Yeelight connection to one light in the local network.
 **Developer mode/LAN control** has to be activated (usually from within the Yeelight app) to allow local control of the Yeelight through Node-RED. You can <a href="https://www.yeelight.com/en_US/developer" target="_blank">learn more about Yeelight developer options</a> here.
 
 ## Support
-If something is not working as expected, or if you think this node could be improved in other ways, [please file an issue](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/issues/new) on GitHub.
+If something is not working as expected, if you think there is a feature missing, or if you think this node could be improved in other ways, [please create an issue](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue/issues) on GitHub.
 
 ### Links
 
