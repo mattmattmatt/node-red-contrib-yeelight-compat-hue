@@ -128,3 +128,6 @@ If something is not working as expected, if you think there is a feature missing
  - Find [node-red-contrib-yeelight-compat-hue in the Node-RED flow library](https://flows.nodered.org/node/node-red-contrib-yeelight-compat-hue)
  - Find  [node-red-contrib-yeelight-compat-hue on npm](https://www.npmjs.com/package/node-red-contrib-yeelight-compat-hue)
  - Find [node-red-contrib-yeelight-compat-hue on GitHub](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
+
+### Hello bear
+![](http://www.reactiongifs.com/r/hello-bear.gif)
