@@ -1,0 +1,25 @@
+language: node_js
+node_js:
+    - 8
+
+notifications:
+  email: false
+
+cache:
+  directories:
+    - "node_modules"
+
+jobs:
+    include:
+        - stage: unit tests
+          script: npm test
+        - stage: build
+          script: npm run build && echo "✅ Done"
+        - stage: publish
+          script: npm run build && npm run semantic-release && echo "✅ Done"
+
+stages:
+  - unit tests
+  - build
+  - name: publish
+    if: branch = master
