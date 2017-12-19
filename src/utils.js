@@ -58,7 +58,7 @@ export function colorTemperatureToRgb(kelvin) {
     };
 }
 
-function clamp(x, min, max) {
+export function clamp(x, min, max) {
     if (x < min) {
         return min;
     }

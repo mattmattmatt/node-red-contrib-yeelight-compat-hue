@@ -40,7 +40,7 @@ Sets the state of the selected Yeelight device.
 | `hue` | Sets the hue value from `0` to `65535` |
 | `sat`  | Sets the saturation value from `0` to `255`  |
 | `hex`  | Sets the rgb value from `#00000` to `#FFFFFF`   |
-| `duration` | Sets a transition time in milliseconds, e.g. `4500` means 4.5 seconds |
+| `duration` | Sets a transition time in milliseconds, e.g. `4500` means 4.5 seconds. Defaults to `500` |
 
 #### Example payloads
 

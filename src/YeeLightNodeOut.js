@@ -4,7 +4,7 @@
 import Yeelight from 'yeelight2';
 import convert from 'color-convert';
 
-import { sanitizeState, hexToRgbInt, normalize, colorTemperatureToRgbInt } from './utils';
+import { sanitizeState, hexToRgbInt, normalize, colorTemperatureToRgbInt, clamp } from './utils';
 
 export default function YeeLightNodeOut(RED) {
     return function(config) {
@@ -15,71 +15,68 @@ export default function YeeLightNodeOut(RED) {
                 try {
                     msg.payload = JSON.parse(msg.payload);
                 } catch (e) {
-                    node.error(`Yeelight: Error during payload parsing\n${e}\n${msg.payload}`);
-                    return;
+                    return node.error(
+                        `Yeelight: Error during payload parsing\n${e}\n${msg.payload}`
+                    );
                 }
             }
 
             if (typeof msg.payload !== 'object') {
-                node.error(`Yeelight: Invalid payload\n${msg.payload}`);
-                return;
+                return node.error(`Yeelight: Invalid payload\n${msg.payload}`);
             }
 
-            const { on, hex, bri, hue, sat, duration, ct } = msg.payload;
+            const { on, hex, bri, hue, sat, duration = 500, ct } = msg.payload;
 
             if (on === false) {
-                node.serverConfig.yeelight.set_power(on, null, duration);
-                return;
+                return node.serverConfig.yeelight.set_power(on, null, duration);
             }
 
             node.serverConfig.yeelight.sync().then(state => {
+                let colorValue;
+                let colorMode;
                 const currentState = sanitizeState(state).state;
-                let rgbIntToTurnTo;
-                let briToTurnTo;
+                let briToTurnTo = clamp(normalize(bri || currentState.bri, 255, 100), 1, 100);
 
                 if (typeof ct !== 'undefined') {
-                    rgbIntToTurnTo = colorTemperatureToRgbInt(ct);
-                    briToTurnTo = normalize(bri || currentState.bri, 255, 100);
+                    colorMode = 2;
+                    colorValue = ct;
                 } else if (typeof hex !== 'undefined') {
-                    rgbIntToTurnTo = hexToRgbInt(hex);
-                    briToTurnTo = (bri && normalize(bri, 255, 100)) || convert.hex.hsv(hex)[2];
+                    colorMode = 1;
+                    colorValue = hexToRgbInt(hex);
+                    // if no bri was specified, calculate from hex value
+                    briToTurnTo = bri ? briToTurnTo : clamp(convert.hex.hsv(hex)[2], 1, 100);
                 } else if (
                     typeof hue !== 'undefined' ||
                     typeof sat !== 'undefined' ||
                     typeof bri !== 'undefined'
                 ) {
-                    rgbIntToTurnTo = hexToRgbInt(
+                    colorMode = 1;
+                    colorValue = hexToRgbInt(
                         convert.hsv.hex(
                             normalize(hue || currentState.hue, 65535, 359),
                             normalize(sat || currentState.sat, 255, 100),
-                            normalize(bri || currentState.bri, 255, 100)
+                            briToTurnTo
                         )
                     );
-                    briToTurnTo = normalize(bri || currentState.bri, 255, 100);
                 } else if (on) {
-                    node.serverConfig.yeelight.set_power(on, null, duration);
-                    return;
+                    return node.serverConfig.yeelight.set_power(on, null, duration);
                 }
 
-                const flowExpression = `${duration || 500}, 1, ${rgbIntToTurnTo}, ${briToTurnTo}`;
-
-                let preparePromise;
-
-                if (currentState.on) {
-                    preparePromise = Promise.resolve();
-                } else {
-                    preparePromise = node.serverConfig.yeelight.set_scene(
-                        'color',
-                        rgbIntToTurnTo,
-                        1
-                    );
-                }
-
-                preparePromise
-                    .then(() => {
-                        node.serverConfig.yeelight.start_cf(1, 1, flowExpression);
-                    })
-                    .catch(e => console.log('yeelight error', e));
+                return node.serverConfig.yeelight
+                    .set_scene(
+                        'cf',
+                        1, // don't repeat
+                        1, // keep in end-state
+                        `${duration}, ${colorMode}, ${colorValue}, ${briToTurnTo}`
+                    )
+                    .catch(e => {
+                        if (e.code === -5000) {
+                            return node.error(
+                                'Yeelight "general error (code -5000)". Payload might be invalid.'
+                            );
+                        }
+                        throw e;
+                    });
             });
         };
 
