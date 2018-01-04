@@ -93,7 +93,7 @@
     "husky": "^0.14.3",
     "nodemon": "^1.14.7",
     "prettier": "^1.9.2",
-    "semantic-release": "^9.1.1",
+    "semantic-release": "^11.0.2",
     "webpack": "^3.10.0"
   },
   "dependencies": {
