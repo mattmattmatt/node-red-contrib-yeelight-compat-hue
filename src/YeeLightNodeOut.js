@@ -31,53 +31,58 @@ export default function YeeLightNodeOut(RED) {
                 return node.serverConfig.yeelight.set_power(on, null, duration);
             }
 
-            node.serverConfig.yeelight.sync().then(state => {
-                let colorValue;
-                let colorMode;
-                const currentState = sanitizeState(state).state;
-                let briToTurnTo = clamp(normalize(bri || currentState.bri, 255, 100), 1, 100);
+            node.serverConfig.yeelight
+                .sync()
+                .then(state => {
+                    let colorValue;
+                    let colorMode;
+                    const currentState = sanitizeState(state).state;
+                    let briToTurnTo = clamp(normalize(bri || currentState.bri, 255, 100), 1, 100);
 
-                if (typeof ct !== 'undefined') {
-                    colorMode = 2;
-                    colorValue = ct;
-                } else if (typeof hex !== 'undefined') {
-                    colorMode = 1;
-                    colorValue = hexToRgbInt(hex);
-                    // if no bri was specified, calculate from hex value
-                    briToTurnTo = bri ? briToTurnTo : clamp(convert.hex.hsv(hex)[2], 1, 100);
-                } else if (
-                    typeof hue !== 'undefined' ||
-                    typeof sat !== 'undefined' ||
-                    typeof bri !== 'undefined'
-                ) {
-                    colorMode = 1;
-                    colorValue = hexToRgbInt(
-                        convert.hsv.hex(
-                            normalize(hue || currentState.hue, 65535, 359),
-                            normalize(sat || currentState.sat, 255, 100),
-                            briToTurnTo
+                    if (typeof ct !== 'undefined') {
+                        colorMode = 2;
+                        colorValue = ct;
+                    } else if (typeof hex !== 'undefined') {
+                        colorMode = 1;
+                        colorValue = hexToRgbInt(hex);
+                        // if no bri was specified, calculate from hex value
+                        briToTurnTo = bri ? briToTurnTo : clamp(convert.hex.hsv(hex)[2], 1, 100);
+                    } else if (
+                        typeof hue !== 'undefined' ||
+                        typeof sat !== 'undefined' ||
+                        typeof bri !== 'undefined'
+                    ) {
+                        colorMode = 1;
+                        colorValue = hexToRgbInt(
+                            convert.hsv.hex(
+                                normalize(hue || currentState.hue, 65535, 359),
+                                normalize(sat || currentState.sat, 255, 100),
+                                briToTurnTo
+                            )
+                        );
+                    } else if (on) {
+                        return node.serverConfig.yeelight.set_power(on, null, duration);
+                    }
+
+                    return node.serverConfig.yeelight
+                        .set_scene(
+                            'cf',
+                            1, // don't repeat
+                            1, // keep in end-state
+                            `${duration}, ${colorMode}, ${colorValue}, ${briToTurnTo}`
                         )
-                    );
-                } else if (on) {
-                    return node.serverConfig.yeelight.set_power(on, null, duration);
-                }
-
-                return node.serverConfig.yeelight
-                    .set_scene(
-                        'cf',
-                        1, // don't repeat
-                        1, // keep in end-state
-                        `${duration}, ${colorMode}, ${colorValue}, ${briToTurnTo}`
-                    )
-                    .catch(e => {
-                        if (e.code === -5000) {
-                            return node.error(
-                                'Yeelight "general error (code -5000)". Payload might be invalid.'
-                            );
-                        }
-                        throw e;
-                    });
-            });
+                        .catch(e => {
+                            if (e.code === -5000) {
+                                return node.error(
+                                    'Yeelight "general error (code -5000)". Payload might be invalid.'
+                                );
+                            }
+                            throw e;
+                        });
+                })
+                .catch(e => {
+                    throw e;
+                });
         };
 
         const onConnected = () => {
