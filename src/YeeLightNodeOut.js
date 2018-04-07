@@ -87,7 +87,11 @@ export default function YeeLightNodeOut(RED) {
                     }
                     node.log('An error occured while syncing or setting a new value');
                     console.error(e);
-                    onYeelightError(e);
+                    node.status({
+                        fill: 'red',
+                        shape: 'ring',
+                        text: `Command send error: ${e.code}`,
+                    });
                 });
         };
 
