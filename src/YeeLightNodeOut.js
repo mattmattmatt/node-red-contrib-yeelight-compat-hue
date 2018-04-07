@@ -81,7 +81,13 @@ export default function YeeLightNodeOut(RED) {
                         });
                 })
                 .catch(e => {
-                    throw e;
+                    if (e.message === 'timeout') {
+                        e.code = 'timeout';
+                        e.message = 'Local timeout in "Yeelight.command" execution';
+                    }
+                    node.log('An error occured while syncing or setting a new value');
+                    console.error(e);
+                    onYeelightError(e);
                 });
         };
 
