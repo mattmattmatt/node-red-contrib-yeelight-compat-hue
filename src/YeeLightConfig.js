@@ -1,5 +1,7 @@
 import Yeelight from 'yeelight2';
 
+const RECONNETION_INTERVAL_SECS = 5000;
+
 export default function YeeLightConfig(RED) {
     return function(config) {
         const node = this;
@@ -19,7 +21,8 @@ export default function YeeLightConfig(RED) {
 
         const onYeelightError = error => {
             console.error(`Error at ${host}`, error);
-            reconnectionTimeout = setTimeout(startConnection, 5000);
+            clearTimeout(reconnectionTimeout);
+            reconnectionTimeout = setTimeout(startConnection, RECONNETION_INTERVAL_SECS);
             node.yeelight.socketState = 'error';
         };
 
