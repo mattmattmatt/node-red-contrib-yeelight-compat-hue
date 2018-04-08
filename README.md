@@ -139,4 +139,4 @@ If something is not working as expected, if you think there is a feature missing
  - Find [node-red-contrib-yeelight-compat-hue on GitHub](https://github.com/mattmattmatt/node-red-contrib-yeelight-compat-hue)
 
 ### Hello bear
-![](http://www.reactiongifs.com/r/hello-bear.gif)
+![](https://www.reactiongifs.com/r/hello-bear.gif)
