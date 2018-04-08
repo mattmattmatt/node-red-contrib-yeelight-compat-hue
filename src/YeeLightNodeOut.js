@@ -95,26 +95,6 @@ export default function YeeLightNodeOut(RED) {
                 });
         };
 
-        const onConnected = () => {
-            node.status({ fill: 'green', shape: 'dot', text: 'Connected' });
-        };
-
-        const onYeelightError = (error = {}) => {
-            node.status({ fill: 'red', shape: 'ring', text: `Connection error: ${error.code}` });
-        };
-
-        const startConnection = () => {
-            node.status({ fill: 'yellow', shape: 'ring', text: 'Connecting...' });
-            node.serverConfig.yeelight.on('connect', onConnected);
-            node.serverConfig.yeelight.on('error', onYeelightError);
-            if (node.serverConfig.yeelight.socketState === 'connected') {
-                onConnected();
-            }
-            if (node.serverConfig.yeelight.socketState === 'error') {
-                onYeelightError();
-            }
-        };
-
         (function init() {
             RED.nodes.createNode(node, config);
             node.serverConfig = RED.nodes.getNode(config.server);
@@ -123,8 +103,16 @@ export default function YeeLightNodeOut(RED) {
                 node.status({ fill: 'red', shape: 'ring', text: 'Hostname not set' });
                 return;
             }
-            startConnection();
+
+            node.serverConfig.registerClientNode(node);
+
             node.on('input', onInput);
+
+            node.on('close', function() {
+                if (node.serverConfig) {
+                    node.serverConfig.deregisterClientNode(node);
+                }
+            });
         })();
     };
 }
