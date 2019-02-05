@@ -39,7 +39,7 @@ export default function YeeLightNodeOut(RED) {
                      
                     // if msg.payload.on = "toggle", invert the state of the light
                     // if the light is on, turn it off and if the light is off: turn it on
-                    // so, the param on car noew have tri-state: true, false or "toggle"
+                    // so, the param on car noew have three states: true, false or "toggle"
                     if (on == "toggle") {
                         on != currentState.on;
                     }
