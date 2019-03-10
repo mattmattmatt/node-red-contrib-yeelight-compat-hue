@@ -41,6 +41,7 @@ Sets the state of the selected Yeelight device.
 | `sat`  | Sets the saturation value from `0` to `255`  |
 | `hex`  | Sets the rgb value from `#00000` to `#FFFFFF`   |
 | `duration` | Sets a transition time in milliseconds, e.g. `4500` means 4.5 seconds. Defaults to `500` |
+| `bg` | Sets a background mode for changing background light (supported by some lamps, for example: Уeelight 650) where the value is `true` or `false` |
 
 #### Example payloads
 
@@ -63,6 +64,16 @@ Sets the state of the selected Yeelight device.
 ```JSON
 {
     "ct": 2200,
+}
+```
+```JSON
+ {
+    "on": true,
+    "bri": 255,
+    "hue": 913,
+    "sat": 255,
+    "duration": 5000,
+    "bg": true
 }
 ```
 The node supports sending [color temperature values](http://www.erco.com/service/rgbw/), [hex values](http://htmlcolorcodes.com/) and [HSV values](https://alloyui.com/examples/color-picker/hsv).  

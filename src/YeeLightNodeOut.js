@@ -25,7 +25,7 @@ export default function YeeLightNodeOut(RED) {
                 return node.error(`Yeelight: Invalid payload\n${msg.payload}`);
             }
 
-            const { on, hex, bri, hue, sat, duration = 500, ct } = msg.payload;
+            const { on, hex, bri, hue, sat, duration = 500, ct, bg } = msg.payload;
 
             if (on === false) {
                 return node.serverConfig.yeelight.set_power(on, null, duration);
@@ -36,8 +36,14 @@ export default function YeeLightNodeOut(RED) {
                 .then(state => {
                     let colorValue;
                     let colorMode;
+                    let isBackground = false;
+
                     const currentState = sanitizeState(state).state;
                     let briToTurnTo = clamp(normalize(bri || currentState.bri, 255, 100), 1, 100);
+
+                    if (typeof bg !== 'undefined') {
+                      isBackground = (bg ? true : false)
+                    }
 
                     if (typeof ct !== 'undefined') {
                         colorMode = 2;
@@ -61,16 +67,16 @@ export default function YeeLightNodeOut(RED) {
                             )
                         );
                     } else if (on) {
-                        return node.serverConfig.yeelight.set_power(on, null, duration);
+                      let power =  ~[ 1, true, '1','on' ].indexOf(on) ? 'on' : 'off';
+                      return node.serverConfig.yeelight.command((isBackground?'bg_':'')+'set_power', [ power, 'smooth', duration || 500]);
                     }
 
-                    return node.serverConfig.yeelight
-                        .set_scene(
-                            'cf',
-                            1, // don't repeat
-                            1, // keep in end-state
-                            `${duration}, ${colorMode}, ${colorValue}, ${briToTurnTo}`
-                        )
+                    return node.serverConfig.yeelight.command((isBackground ? 'bg_' : '')+'set_scene', [
+                          'cf',
+                          1, // don't repeat
+                          1, // keep in end-state
+                          `${duration}, ${colorMode}, ${colorValue}, ${briToTurnTo}`
+                        ])
                         .catch(e => {
                             if (e.code === -5000) {
                                 return node.error(
