@@ -27,7 +27,6 @@ export default function YeeLightNodeOut(RED) {
 
             const { on, hex, bri, hue, sat, duration = 500, ct } = msg.payload;
 
-
             node.serverConfig.yeelight
                 .sync()
                 .then(state => {
