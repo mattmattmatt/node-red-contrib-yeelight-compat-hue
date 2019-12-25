@@ -34,7 +34,7 @@ Sets the state of the selected Yeelight device.
 
 | Property | Details |
 | :---| :---|
-| `on`   | Sets the `on` state where the value is `true` or `false`|
+| `on`   | Sets the `on` state where the value is `true`, `false` or `toggle` |
 | `bri`   | Sets the brightness value from `0` to `255` |
 | `ct`   | Sets the color temperature value in Kelvin from `1700` to `6500` |
 | `hue` | Sets the hue value from `0` to `65535` |
