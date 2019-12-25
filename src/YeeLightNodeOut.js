@@ -25,7 +25,7 @@ export default function YeeLightNodeOut(RED) {
                 return node.error(`Yeelight: Invalid payload\n${msg.payload}`);
             }
 
-            const { on, hex, bri, hue, sat, duration = 500, ct } = msg.payload;
+            let { on, hex, bri, hue, sat, duration = 500, ct } = msg.payload;
 
             node.serverConfig.yeelight
                 .sync()
