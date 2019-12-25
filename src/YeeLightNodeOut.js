@@ -39,7 +39,7 @@ export default function YeeLightNodeOut(RED) {
                     // if the light is on, turn it off and if the light is off: turn it on
                     // so, the param on car noew have three states: true, false or "toggle"
                     if (on == 'toggle') {
-                        on != currentState.on;
+                        on = !currentState.on;
                     }
                     // I need to move this test here to keep the off status functionnal
                     if (on === false) {
